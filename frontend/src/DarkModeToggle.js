@@ -29,7 +29,7 @@ class DarkModeToggle {
   setColorMode(isDarkMode) {
     document.documentElement.setAttribute(
       "color-mode",
-      this.isDarkMode ? "dark" : "light"
+      isDarkMode ? "dark" : "light"
     );
   }
 }
