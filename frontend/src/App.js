@@ -3,6 +3,7 @@ console.log("app is running!");
 class App {
   $target = null;
   data = [];
+  page = 1;
 
   constructor($target) {
     this.$target = $target;
@@ -20,8 +21,10 @@ class App {
       onSearch: (keyword) => {
         this.Loading.show();
         api.fetchCats(keyword).then(({ data }) => {
-          this.setState(data);
+          this.setState(data ? data : []);
           this.Loading.hide();
+          // 로컬스토리지에 저장
+          this.saveResult(data);
         });
       },
       onRandomSearch: () => {
@@ -42,6 +45,23 @@ class App {
           cat,
         });
       },
+      onNextPage: () => {
+        console.log("다음페이지 로딩");
+        this.Loading.show();
+        const keywordHistory =
+          localStorage.getItem("keywordHistory") === null
+            ? []
+            : localStorage.getItem("keywordHistory").split(",");
+
+        const lastKeyword = keywordHistory[0];
+        const page = this.page + 1;
+        api.fetchCatsPage(lastKeyword, page).then(({ data }) => {
+          let newData = this.data.concat(data);
+          this.setState(newData);
+          this.page = page;
+          this.Loading.hide();
+        });
+      },
     });
 
     this.imageInfo = new ImageInfo({
@@ -51,11 +71,24 @@ class App {
         cat: null,
       },
     });
+
+    this.init();
   }
 
   setState(nextData) {
-    console.log(this);
     this.data = nextData;
     this.searchResult.setState(nextData);
+  }
+
+  saveResult(result) {
+    localStorage.setItem("lastResult", JSON.stringify(result));
+  }
+
+  init() {
+    const lastResult =
+      localStorage.getItem("lastResult") === null
+        ? []
+        : JSON.parse(localStorage.getItem("lastResult"));
+    this.setState(lastResult);
   }
 }
