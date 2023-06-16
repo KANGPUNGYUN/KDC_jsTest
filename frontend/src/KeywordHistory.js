@@ -1,3 +1,5 @@
+import uniqueArray from "./utils/uniqueArray.js";
+
 class KeywordHistory {
   $keywordHistory = null;
   data = null;
@@ -23,6 +25,8 @@ class KeywordHistory {
   addKeyword(keyword) {
     let keywordHistory = this.getHistory();
     keywordHistory.unshift(keyword);
+    // 중복제거
+    keywordHistory = uniqueArray(keywordHistory);
     keywordHistory = keywordHistory.slice(0, 5);
     localStorage.setItem("keywordHistory", keywordHistory.join(","));
     this.init();
@@ -53,3 +57,5 @@ class KeywordHistory {
       });
   }
 }
+
+export default KeywordHistory;

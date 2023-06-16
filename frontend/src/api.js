@@ -1,4 +1,6 @@
-const API_ENDPOINT = "http://localhost:4001";
+import config from "./config.js";
+
+const { API_ENDPOINT } = config;
 
 // 에러 목록화(예시로 500만 다룸)
 const REQUEST_ERROR = {
@@ -37,3 +39,5 @@ const api = {
     return fetch(`${API_ENDPOINT}/api/cats/${id}`);
   },
 };
+
+export default api;
